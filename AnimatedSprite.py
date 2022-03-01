@@ -4,9 +4,9 @@ import sys
 
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, sheet, columns, rows, x, y):
+    def __init__(self, sheet, columns, rows, x, y, group):
         global all_sprites
-        super().__init__(all_sprites)
+        super().__init__(group)
         self.frames = []
         self.cut_sheet(sheet, columns, rows)
         self.cur_frame = 0
@@ -28,7 +28,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    fullname = os.path.join(name)
     if not os.path.isfile(fullname):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
