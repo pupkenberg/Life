@@ -59,62 +59,73 @@ class InputWindow(QMainWindow):
             self.cell_size = self.cellSizeSpinBox.value()
             config = open('Life/config.txt', encoding='utf-8', mode='w')
             config.write(str(self.width) + ' ' + str(
-                self.height) + ' ' + '10' + ' ' + '10' + ' ' + str(
+                self.height) + ' ' + '10' + ' ' + '90' + ' ' + str(
                 self.cell_size) + ' ' + self.cell_texture_fn + ' ' + self.alive_texture_fn)
             config.close()
-            self.mainloop()
+            mainloop()
 
-    def mainloop(self):
-        global app
+def mainloop():
+    global app
 
-        app.exec_()
-        clock = pygame.time.Clock()
+    app.exec_()
+    clock = pygame.time.Clock()
 
-        running = True
-        pygame.init()
+    running = True
+    pygame.init()
 
-        config = open('Life/config.txt', encoding='utf-8')
-        data = config.readline().split()
-        size = width, height = int(data[0]) * int(data[4]) + 2 * int(data[2]), int(data[1]) * int(
-            data[4]) + 2 * int(data[3])
-        config.close()
+    config = open('Life/config.txt', encoding='utf-8')
+    data = config.readline().split()
+    size = width, height = int(data[0]) * int(data[4]) + 2 * int(data[2]), int(data[1]) * int(
+        data[4]) + 2 * int(data[3])
+    left = int(data[2])
+    top = int(data[3])
+    width = int(data[0])
+    cs = int(data[4])
+    config.close()
 
-        screen = pygame.display.set_mode(size)
-        screen.fill(pygame.Color('black'))
-        life = Life()
-        frame = 0
+    screen = pygame.display.set_mode(size)
+    all_sprites = pygame.sprite.Group()
+    screen.fill(pygame.Color('black'))
+    life = Life()
+    frame = 0
+    plant = AnimatedSprite(load_image("Life/anim.png"), 4, 4, 139, 129, all_sprites)
+    plant.rect.x = (2 * left + cs * width) // 2 - 32
+    plant.rect.y = -10
+    print(left, cs, width)
 
-        while running:
+    while running:
 
-            for event in pygame.event.get():
+        for event in pygame.event.get():
 
-                if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT:
+                running = False
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    life.left_click(event.pos)
+                if event.button == 3:
+                    life.right_click()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
                     running = False
+                    pygame.quit()
+                    return None
+                if event.key == 32:
+                    life.space_press()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if event.button == 1:
-                        life.left_click(event.pos)
-                    if event.button == 3:
-                        life.right_click()
+            if event.type == pygame.MOUSEWHEEL:
+                life.scroll(event.y)
+        frame += 1
 
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_q:
-                        running = False
-                        pygame.quit()
-                        return None
-                    if event.key == 32:
-                        life.space_press()
-
-                if event.type == pygame.MOUSEWHEEL:
-                    life.scroll(event.y)
-            frame += 1
-
-            if life.running:
-                life.next_move()
-                clock.tick(life.fps)
-            screen.fill((255, 255, 255))
-            life.render(screen)
-            pygame.display.flip()
+        if life.running:
+            life.next_move()
+            all_sprites.update()
+            clock.tick(life.fps)
+        screen.fill((255, 255, 255))
+        life.render(screen)
+        all_sprites.draw(screen)
+        pygame.display.flip()
 
 
 def except_hook(cls, exception, traceback):
