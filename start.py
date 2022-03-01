@@ -19,11 +19,12 @@ class InputWindow(QMainWindow):
 
     def set_default_values(self):
         config = open('Life/config.txt', encoding='utf-8')
-        data = config.read()
-        print(data)
+        data = config.read().split()
         self.widthSpinBox.setValue(int(data[0]))
         self.heightSpinBox.setValue(int(data[1]))
         self.cellSizeSpinBox.setValue(int(data[4]))
+        self.cell_texture_fn = data[5]
+        self.alive_texture_fn = data[6]
         config.close()
 
     def connect_buttons(self):
@@ -98,7 +99,6 @@ class InputWindow(QMainWindow):
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
-                        print('1')
                         running = False
                         pygame.quit()
                         return None
