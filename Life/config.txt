@@ -1,1 +1,1 @@
-30 30 10 10 20 C:/Users/pupkenberg/PycharmProjects/Life/Life/dead.png C:/Users/pupkenberg/PycharmProjects/Life/Life/alive.png
+30 30 10 50 20 C:/Users/pupkenberg/PycharmProjects/Life/Life/dead.png C:/Users/pupkenberg/PycharmProjects/Life/Life/alive.png
